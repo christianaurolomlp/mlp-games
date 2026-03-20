@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🏎️ Carrera Criptos - MLP Games</title>
+<title>🎮 MLP Games - Carrera & Predicciones</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════════
@@ -633,13 +633,252 @@ body {
 .confetti { position: absolute; width: 10px; height: 10px; animation: confettiFall 3s ease-out forwards; }
 @keyframes confettiFall { 0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
 
+/* ─── Navigation Menu ─── */
+.game-nav {
+  display: flex; justify-content: center; gap: 0;
+  background: linear-gradient(90deg, #0a0a2a, #001133, #0a0a2a);
+  border-bottom: 2px solid #333;
+}
+.nav-btn {
+  flex: 1; max-width: 300px; padding: 14px 20px;
+  background: transparent; border: none; border-bottom: 3px solid transparent;
+  color: #555; font-family: 'Orbitron', monospace; font-size: 13px;
+  letter-spacing: 2px; cursor: pointer; transition: all 0.3s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.nav-btn:hover { color: #888; background: rgba(255,255,255,0.03); }
+.nav-btn.active-race { color: #00aaff; border-bottom-color: #00aaff; background: rgba(0,170,255,0.05); }
+.nav-btn.active-predict { color: #ff66aa; border-bottom-color: #ff66aa; background: rgba(255,102,170,0.05); }
+.nav-icon { font-size: 18px; }
+
+/* ─── Game Pages ─── */
+.game-page { display: none; }
+.game-page.active { display: block; }
+
+/* ─── Predictions Game Styles ─── */
+.predict-header {
+  background: linear-gradient(90deg, #1a0020, #330033, #1a0020);
+  padding: 15px 20px; display: flex; align-items: center;
+  justify-content: center; border-bottom: 2px solid #ff66aa;
+}
+.predict-header-title {
+  font-family: 'Orbitron', monospace; font-size: 20px; font-weight: 900;
+  color: #ff66aa; letter-spacing: 3px;
+  text-shadow: 0 0 20px rgba(255,102,170,0.5);
+}
+
+.predict-grid {
+  display: grid; grid-template-columns: 380px 1fr;
+  gap: 20px; padding: 20px; max-width: 1600px; margin: 0 auto;
+}
+
+.predict-panel {
+  background: linear-gradient(180deg, rgba(40, 0, 40, 0.8) 0%, rgba(20, 0, 20, 0.9) 100%);
+  border: 1px solid rgba(255, 102, 170, 0.3); padding: 15px;
+}
+.predict-panel .panel-header { border-bottom-color: rgba(255, 102, 170, 0.3); }
+.predict-panel .panel-icon { font-size: 18px; }
+.predict-panel .panel-title { color: #ff66aa; }
+
+/* Asset Selector */
+.asset-selector { margin-bottom: 15px; }
+.asset-selector label {
+  display: block; font-size: 10px; color: #cc5588;
+  letter-spacing: 1px; margin-bottom: 8px;
+}
+.asset-dropdown {
+  width: 100%; padding: 10px; border: 1px solid #ff66aa;
+  background: rgba(255,102,170,0.1); color: #ff66aa;
+  font-family: 'Orbitron', monospace; font-size: 14px;
+}
+.asset-dropdown option { background: #1a0020; color: #ff66aa; }
+
+/* Predict Status */
+.predict-status {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 15px; margin-bottom: 15px;
+  font-family: 'Orbitron', monospace; font-size: 12px; letter-spacing: 2px;
+}
+.predict-status.setup { border: 1px solid #ff66aa; color: #ff66aa; background: rgba(255,102,170,0.1); }
+.predict-status.collecting { border: 1px solid #00ff88; color: #00ff88; background: rgba(0,255,136,0.1); }
+.predict-status.waiting { border: 1px solid #ffaa00; color: #ffaa00; background: rgba(255,170,0,0.1); }
+.predict-status.results { border: 1px solid #00aaff; color: #00aaff; background: rgba(0,170,255,0.1); }
+
+/* Predict Chat Collector */
+.predict-collector {
+  background: rgba(0,0,0,0.4); border: 2px solid #ff66aa;
+  padding: 15px; margin-bottom: 15px; border-radius: 8px;
+}
+.predict-collector-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+  font-family: 'Orbitron', monospace; font-size: 11px; color: #ff66aa; letter-spacing: 1px;
+}
+.predict-collector input[type="text"] {
+  width: 100%; padding: 10px; border: 1px solid #ff66aa;
+  background: rgba(255,102,170,0.1); color: #ff88bb;
+  font-family: 'Orbitron', monospace; font-size: 12px; margin-bottom: 10px;
+}
+.predict-collector input[type="text"]::placeholder { color: #884466; }
+
+/* Predict Counter */
+.predict-counter {
+  text-align: center; padding: 12px;
+  border: 1px solid rgba(255,102,170,0.3); background: rgba(0,0,0,0.3); margin-bottom: 15px;
+}
+.predict-count-value {
+  font-family: 'Orbitron', monospace; font-size: 32px; font-weight: 900; color: #ff66aa;
+}
+.predict-count-label { font-size: 9px; color: #cc5588; letter-spacing: 2px; margin-top: 5px; }
+
+/* Live Feed */
+.predict-feed {
+  max-height: 300px; overflow-y: auto; margin-bottom: 15px;
+  border: 1px solid rgba(255,102,170,0.2); background: rgba(0,0,0,0.3);
+}
+.predict-feed-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; border-bottom: 1px solid rgba(255,102,170,0.1);
+  animation: feedSlideIn 0.3s ease-out;
+}
+@keyframes feedSlideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+.predict-feed-name { color: #ff88bb; font-size: 12px; font-weight: 600; }
+.predict-feed-price {
+  font-family: 'Orbitron', monospace; font-size: 12px; color: #ffaa00; font-weight: 700;
+}
+.predict-feed-empty {
+  padding: 30px; text-align: center; color: #884466; font-size: 12px;
+}
+
+/* Predict Buttons */
+.btn.predict-primary { border-color: #ff66aa; background: rgba(255,102,170,0.15); color: #ff66aa; }
+.btn.predict-primary:hover:not(:disabled) { background: rgba(255,102,170,0.3); }
+
+/* Predict Leaderboard */
+.predict-leaderboard {
+  background: rgba(0,0,0,0.5); border: 2px solid #ff66aa;
+  padding: 20px; min-height: 400px; position: relative;
+}
+.predict-lb-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 15px; padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,102,170,0.3);
+}
+.predict-lb-title {
+  font-family: 'Orbitron', monospace; font-size: 12px; color: #ff66aa; letter-spacing: 2px;
+}
+.predict-current-price {
+  font-family: 'Orbitron', monospace; font-size: 14px; color: #ffaa00;
+  padding: 5px 12px; border: 1px solid #ffaa00; background: rgba(255,170,0,0.1);
+}
+
+/* Leaderboard Rows */
+.predict-lb-row {
+  display: flex; align-items: center; padding: 10px 12px;
+  border: 1px solid rgba(255,102,170,0.15); margin-bottom: 4px;
+  background: rgba(0,0,0,0.3); transition: all 0.3s;
+}
+.predict-lb-row.winner {
+  border-color: #ffaa00; background: rgba(255,170,0,0.15);
+  animation: winnerGlow 1s infinite;
+}
+@keyframes winnerGlow { 0%,100% { box-shadow: 0 0 5px rgba(255,170,0,0.3); } 50% { box-shadow: 0 0 20px rgba(255,170,0,0.6); } }
+.predict-lb-pos {
+  width: 40px; font-family: 'Orbitron', monospace; font-size: 14px;
+  font-weight: 900; color: #ffaa00; text-align: center; flex-shrink: 0;
+}
+.predict-lb-name { flex: 1; color: #ff88bb; font-size: 13px; font-weight: 600; padding: 0 10px; }
+.predict-lb-prediction {
+  font-family: 'Orbitron', monospace; font-size: 13px; color: #00aaff;
+  min-width: 120px; text-align: right; padding-right: 15px;
+}
+.predict-lb-distance {
+  font-family: 'Orbitron', monospace; font-size: 11px; color: #888;
+  min-width: 100px; text-align: right;
+}
+.predict-lb-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 300px; color: #553355; font-size: 14px;
+}
+.predict-lb-empty::before { content: "🎯"; font-size: 50px; margin-bottom: 20px; opacity: 0.5; }
+
+/* Final Price Display */
+.predict-final-price {
+  text-align: center; padding: 20px; margin-bottom: 15px;
+  border: 2px solid #ffaa00;
+  background: linear-gradient(180deg, rgba(255,170,0,0.15) 0%, transparent 100%);
+}
+.predict-final-label {
+  font-size: 10px; color: #cc8800; letter-spacing: 2px; margin-bottom: 8px;
+}
+.predict-final-value {
+  font-family: 'Orbitron', monospace; font-size: 36px; font-weight: 900; color: #ffaa00;
+}
+
+/* Winner Display for Predictions */
+.predict-winner-display {
+  display: none; text-align: center; padding: 20px; margin-top: 15px;
+  border: 2px solid #ffaa00;
+  background: linear-gradient(180deg, rgba(255,170,0,0.2), rgba(0,0,0,0.9));
+}
+.predict-winner-display.show { display: block; }
+.predict-winner-crown { font-size: 50px; margin-bottom: 10px; }
+.predict-winner-name {
+  font-family: 'Orbitron', monospace; font-size: 24px; font-weight: 900;
+  color: #00ff88; margin-bottom: 8px;
+}
+.predict-winner-pred {
+  font-family: 'Orbitron', monospace; font-size: 18px; color: #00aaff; margin-bottom: 5px;
+}
+.predict-winner-diff {
+  font-size: 14px; color: #ffaa00; margin-bottom: 15px;
+}
+
+/* Predict Paste Mode */
+.predict-paste {
+  margin-bottom: 15px;
+}
+.predict-paste-header {
+  padding: 10px 15px; background: rgba(255,102,170,0.1);
+  border: 1px solid rgba(255,102,170,0.3); cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'Orbitron', monospace; font-size: 11px; color: #ff66aa; letter-spacing: 1px;
+}
+.predict-paste-header:hover { background: rgba(255,102,170,0.2); }
+.predict-paste-content {
+  display: none; padding: 15px;
+  border: 1px solid rgba(255,102,170,0.2); border-top: none;
+}
+.predict-paste-textarea {
+  width: 100%; min-height: 120px; padding: 12px;
+  border: 1px solid rgba(255,102,170,0.3);
+  background: rgba(0,0,0,0.5); color: #ff88bb; font-size: 12px;
+  resize: vertical; margin-bottom: 10px;
+}
+.predict-paste-textarea::placeholder { color: #553355; }
+
 /* ─── Responsive ─── */
 @media (max-width: 1200px) {
   .main-grid { grid-template-columns: 1fr; }
+  .predict-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
+
+<!-- ═══ NAVIGATION ═══ -->
+<div class="game-nav">
+  <button class="nav-btn active-race" id="navRace" onclick="switchGame('race')">
+    <span class="nav-icon">🏎️</span> CARRERA CRIPTOS
+  </button>
+  <button class="nav-btn" id="navPredict" onclick="switchGame('predict')">
+    <span class="nav-icon">🎯</span> PREDICCIONES CRIPTO
+  </button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     GAME 1: CARRERA CRIPTOS
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="game-page active" id="pageRace">
 
 <!-- ═══ HEADER ═══ -->
 <div class="game-header">
@@ -850,6 +1089,149 @@ yo quiero ETH"></textarea>
   </div>
 </div>
 
+</div><!-- END pageRace -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     GAME 2: PREDICCIONES CRIPTO
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="game-page" id="pagePredict">
+
+<!-- ═══ PREDICT HEADER ═══ -->
+<div class="predict-header">
+  <span class="predict-header-title">🎯 PREDICCIONES CRIPTO</span>
+</div>
+
+<!-- ═══ YT LIVE BOX ═══ -->
+<div class="yt-live-box">
+  <a href="https://www.youtube.com/@Aurolo/streams" target="_blank" class="yt-live-btn">
+    <svg viewBox="0 0 24 24" width="32" height="32"><path fill="#FF0000" d="M23.5 6.2c-.3-1-1-1.8-2-2.1C19.6 3.5 12 3.5 12 3.5s-7.6 0-9.5.6c-1 .3-1.7 1.1-2 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8c.3 1 1 1.8 2 2.1 1.9.6 9.5.6 9.5.6s7.6 0 9.5-.6c1-.3 1.7-1.1 2-2.1.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8z"/><path fill="#FFF" d="M9.6 15.6V8.4l6.4 3.6-6.4 3.6z"/></svg>
+    <div class="yt-live-text">
+      <span class="yt-live-title">🔴 PREDICE Y GANA EN VIVO</span>
+      <span class="yt-live-sub">con Capi Aurolo en YouTube</span>
+    </div>
+    <span class="yt-live-arrow">→</span>
+  </a>
+</div>
+
+<!-- ═══ PREDICT MAIN GRID ═══ -->
+<div class="predict-grid">
+
+  <!-- ─── LEFT PANEL: CONTROL ─── -->
+  <div class="predict-panel">
+    <div class="panel-header"><div class="panel-icon">🎯</div><span class="panel-title">CONTROL PREDICCIONES</span></div>
+
+    <!-- Asset Selector -->
+    <div class="asset-selector">
+      <label>CRIPTOMONEDA A PREDECIR</label>
+      <select class="asset-dropdown" id="predictAsset">
+        <option value="BTC" selected>₿ Bitcoin (BTC)</option>
+        <option value="ETH">Ξ Ethereum (ETH)</option>
+        <option value="SOL">◎ Solana (SOL)</option>
+        <option value="BNB">◆ BNB (BNB)</option>
+        <option value="XRP">✕ Ripple (XRP)</option>
+        <option value="DOGE">Ð Dogecoin (DOGE)</option>
+        <option value="ADA">◇ Cardano (ADA)</option>
+        <option value="AVAX">▲ Avalanche (AVAX)</option>
+        <option value="DOT">● Polkadot (DOT)</option>
+        <option value="LINK">⬢ Chainlink (LINK)</option>
+        <option value="TON">💎 Toncoin (TON)</option>
+        <option value="TRUMP">🇺🇸 Trump (TRUMP)</option>
+        <option value="PEPE">🐸 Pepe (PEPE)</option>
+        <option value="WIF">🐶 Dogwifhat (WIF)</option>
+      </select>
+    </div>
+
+    <div class="predict-status setup" id="predictStatus">
+      <span class="status-dot"></span>
+      <span id="predictStatusText">CONFIGURACIÓN</span>
+    </div>
+
+    <!-- Prize -->
+    <div class="prize-box">
+      <div class="prize-label">🏆 PREMIO 🏆</div>
+      <input type="text" class="prize-input" id="predictPrize" placeholder="Ej: 10 USDT">
+    </div>
+
+    <div class="predict-counter">
+      <div class="predict-count-value" id="predictCount">0</div>
+      <div class="predict-count-label">PREDICCIONES RECIBIDAS</div>
+    </div>
+
+    <!-- YouTube Chat Collection for Predictions -->
+    <div class="predict-collector">
+      <div class="predict-collector-header">📺 RECOPILAR PREDICCIONES DE YOUTUBE</div>
+      <input type="text" id="predictVideoInput" placeholder="URL o ID del video de YouTube...">
+      <div class="chat-status" id="predictChatStatus" style="display:none"></div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+        <button class="btn predict-primary" id="btnPredictStart" onclick="predictStartCollection()">🎯 INICIAR PREDICCIONES</button>
+        <button class="btn danger" id="btnPredictStop" onclick="predictStopCollection()" disabled>⏹ CERRAR PREDICCIONES</button>
+      </div>
+    </div>
+
+    <!-- Paste Mode for Predictions -->
+    <div class="predict-paste">
+      <div class="predict-paste-header" onclick="togglePredictPaste()">
+        <span>📋 PEGAR COMENTARIOS</span>
+        <span class="ia-toggle" id="predictPasteToggle">▼</span>
+      </div>
+      <div class="predict-paste-content" id="predictPasteContent">
+        <div class="ia-instructions" style="color:#cc5588;">
+          🤖 Pega comentarios del chat con predicciones de precio.<br>
+          La IA extraerá nombre + predicción automáticamente.
+        </div>
+        <textarea class="predict-paste-textarea" id="predictPasteText" placeholder="Pega aquí los comentarios...
+
+Ejemplo:
+Pedro_Trader: yo digo 72.500
+CriptoJuan: creo que 69800
+Maria123: apoyo a $71k"></textarea>
+        <button class="btn predict-primary" onclick="predictProcessPaste()">🤖 PROCESAR CON IA</button>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display:grid; gap:8px;">
+      <button class="btn warning" id="btnPredictReveal" onclick="predictRevealWinner()" disabled>🏆 REVELAR GANADOR</button>
+      <button class="btn danger" id="btnPredictReset" onclick="predictReset()">🔄 REINICIAR</button>
+    </div>
+  </div>
+
+  <!-- ─── RIGHT PANEL: LEADERBOARD ─── -->
+  <div class="predict-panel">
+    <div class="panel-header"><div class="panel-icon">📊</div><span class="panel-title">PREDICCIONES</span></div>
+
+    <div class="predict-leaderboard" id="predictLeaderboard">
+      <div class="predict-lb-header">
+        <span class="predict-lb-title">🎯 PREDICCIONES EN VIVO</span>
+        <span class="predict-current-price" id="predictCurrentPrice">Precio: ---</span>
+      </div>
+
+      <div id="predictLbRows">
+        <div class="predict-lb-empty">Esperando predicciones...</div>
+      </div>
+    </div>
+
+    <!-- Final Price Display (hidden until reveal) -->
+    <div class="predict-final-price" id="predictFinalPrice" style="display:none;">
+      <div class="predict-final-label">💰 PRECIO FINAL DE <span id="predictFinalAsset">BTC</span></div>
+      <div class="predict-final-value" id="predictFinalValue">---</div>
+    </div>
+
+    <!-- Winner Display -->
+    <div class="predict-winner-display" id="predictWinnerDisplay">
+      <div class="predict-winner-crown">🏆👑🏆</div>
+      <div style="font-family:'Orbitron',monospace;font-size:14px;color:#ffaa00;letter-spacing:3px;margin-bottom:15px;">◈ GANADOR ◈</div>
+      <div class="predict-winner-name" id="predictWinnerName">---</div>
+      <div class="predict-winner-pred" id="predictWinnerPred">---</div>
+      <div class="predict-winner-diff" id="predictWinnerDiff">---</div>
+      <div id="predictWinnerPrizeText" style="font-size:14px;color:#ffaa00;margin-bottom:15px;">🎁 Premio: ---</div>
+      <a href="https://www.bitunix.com/register?vipCode=nnq9" target="_blank" class="podium-sponsor">🎁 Opera como un campeón en <span>BITUNIX</span> 🚀</a>
+    </div>
+  </div>
+
+</div><!-- predict-grid -->
+</div><!-- END pagePredict -->
+
 <!-- ═══ COUNTDOWN OVERLAY ═══ -->
 <div class="race-countdown" id="raceCountdown">
   <div class="countdown-semaforo">
@@ -888,8 +1270,6 @@ yo quiero ETH"></textarea>
 // ─── CONFIG ──────────────────────────────────────────────────────
 // Set this to your Railway backend URL (or localhost for dev)
 const BACKEND_URL = 'https://mlp-games-production.up.railway.app';
-  ? 'http://localhost:8000'
-  : 'https://your-backend.railway.app'; // ← CHANGE THIS AFTER DEPLOY
 
 // ─── GAME STATE ──────────────────────────────────────────────────
 const game3 = {
@@ -1713,6 +2093,406 @@ async function stopChatCollection() {
 // ─── INIT ────────────────────────────────────────────────────────
 g3UpdateTimerDisplay();
 g3RenderLanes();
+
+// ═══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function switchGame(game) {
+  document.getElementById('pageRace').classList.remove('active');
+  document.getElementById('pagePredict').classList.remove('active');
+  document.getElementById('navRace').className = 'nav-btn';
+  document.getElementById('navPredict').className = 'nav-btn';
+
+  if (game === 'race') {
+    document.getElementById('pageRace').classList.add('active');
+    document.getElementById('navRace').className = 'nav-btn active-race';
+  } else {
+    document.getElementById('pagePredict').classList.add('active');
+    document.getElementById('navPredict').className = 'nav-btn active-predict';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PREDICCIONES CRIPTO - GAME LOGIC
+// ═══════════════════════════════════════════════════════════════
+const predictGame = {
+  phase: 'setup', // setup, collecting, waiting, results
+  sessionId: null,
+  pollInterval: null,
+  participants: [], // [{name, prediction}]
+  asset: 'BTC',
+  finalPrice: null,
+  ranking: [],
+};
+
+// ─── Format price nicely ─────────────────────────────────────────
+function formatPrice(price, asset) {
+  if (price == null) return '---';
+  // For very low-priced coins
+  if (price < 1) return '$' + price.toFixed(6);
+  if (price < 100) return '$' + price.toFixed(2);
+  return '$' + price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// ─── Toggle paste panel ──────────────────────────────────────────
+function togglePredictPaste() {
+  const content = document.getElementById('predictPasteContent');
+  const toggle = document.getElementById('predictPasteToggle');
+  if (content.style.display === 'none' || content.style.display === '') {
+    content.style.display = 'block';
+    toggle.classList.add('open');
+  } else {
+    content.style.display = 'none';
+    toggle.classList.remove('open');
+  }
+}
+
+// ─── Start collecting predictions ────────────────────────────────
+async function predictStartCollection() {
+  const input = document.getElementById('predictVideoInput').value.trim();
+  if (!input) return alert('Ingresa URL o ID del video de YouTube');
+
+  const videoId = extractVideoId(input);
+  predictGame.asset = document.getElementById('predictAsset').value;
+  const statusEl = document.getElementById('predictChatStatus');
+  statusEl.style.display = 'block';
+  statusEl.className = 'chat-status';
+  statusEl.textContent = '⏳ Conectando...';
+
+  try {
+    const response = await fetch(BACKEND_URL + '/api/race/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        video_id: videoId,
+        max_participants: 100,
+        game_type: 'prediction',
+        asset: predictGame.asset
+      })
+    });
+
+    if (!response.ok) throw new Error('Error ' + response.status);
+    const data = await response.json();
+    predictGame.sessionId = data.session_id;
+    predictGame.phase = 'collecting';
+
+    statusEl.className = 'chat-status collecting';
+    statusEl.textContent = '🔴 Recopilando predicciones... 0 mensajes';
+    document.getElementById('btnPredictStart').disabled = true;
+    document.getElementById('btnPredictStop').disabled = false;
+    document.getElementById('predictAsset').disabled = true;
+
+    document.getElementById('predictStatus').className = 'predict-status collecting';
+    document.getElementById('predictStatusText').textContent = '🔴 RECOPILANDO';
+
+    // Poll for updates
+    predictGame.pollInterval = setInterval(async () => {
+      try {
+        const r = await fetch(BACKEND_URL + '/api/race/' + predictGame.sessionId + '/participants');
+        const d = await r.json();
+        statusEl.textContent = '🔴 Recopilando... ' + d.raw_messages_count + ' mensajes';
+        if (d.error) {
+          statusEl.className = 'chat-status error';
+          statusEl.textContent = '❌ ' + d.error;
+          clearInterval(predictGame.pollInterval);
+        }
+      } catch (e) { /* ignore */ }
+    }, 3000);
+
+  } catch (error) {
+    statusEl.className = 'chat-status error';
+    statusEl.textContent = '❌ ' + error.message;
+  }
+}
+
+// ─── Stop collecting ─────────────────────────────────────────────
+async function predictStopCollection() {
+  if (!predictGame.sessionId) return;
+  clearInterval(predictGame.pollInterval);
+
+  const statusEl = document.getElementById('predictChatStatus');
+  statusEl.textContent = '⏳ Procesando predicciones con IA...';
+  statusEl.className = 'chat-status';
+
+  try {
+    const response = await fetch(BACKEND_URL + '/api/race/' + predictGame.sessionId + '/stop', { method: 'POST' });
+    const data = await response.json();
+
+    if (data.participants && data.participants.length > 0) {
+      // Merge with existing
+      for (const p of data.participants) {
+        if (p.prediction != null && !predictGame.participants.find(x => x.name.toLowerCase() === p.name.toLowerCase())) {
+          predictGame.participants.push({ name: p.name, prediction: parseFloat(p.prediction) });
+        }
+      }
+      predictRenderFeed();
+      predictRenderLeaderboard();
+      statusEl.textContent = '✅ ' + data.participants.length + ' predicciones procesadas de ' + data.raw_messages_count + ' mensajes';
+    } else {
+      statusEl.textContent = '⚠️ No se encontraron predicciones (' + data.raw_messages_count + ' mensajes)';
+      statusEl.className = 'chat-status error';
+    }
+  } catch (error) {
+    statusEl.className = 'chat-status error';
+    statusEl.textContent = '❌ ' + error.message;
+  }
+
+  document.getElementById('btnPredictStart').disabled = false;
+  document.getElementById('btnPredictStop').disabled = true;
+
+  predictGame.phase = 'waiting';
+  document.getElementById('predictStatus').className = 'predict-status waiting';
+  document.getElementById('predictStatusText').textContent = '⏳ ESPERANDO REVELACIÓN';
+  document.getElementById('btnPredictReveal').disabled = false;
+
+  // Fetch current price for display
+  predictFetchCurrentPrice();
+}
+
+// ─── Process pasted comments ─────────────────────────────────────
+async function predictProcessPaste() {
+  const comments = document.getElementById('predictPasteText').value.trim();
+  if (!comments) return alert('Pega los comentarios del chat');
+
+  predictGame.asset = document.getElementById('predictAsset').value;
+
+  // Parse messages
+  const lines = comments.split('\n').filter(l => l.trim());
+  const messages = [];
+  let currentAuthor = '';
+
+  for (const line of lines) {
+    if (line.startsWith('@')) {
+      currentAuthor = line.replace('@', '').trim();
+    } else if (currentAuthor) {
+      messages.push({ author: currentAuthor, text: line.trim() });
+      currentAuthor = '';
+    } else {
+      const colonIdx = line.indexOf(':');
+      if (colonIdx > 0) {
+        messages.push({ author: line.substring(0, colonIdx).trim(), text: line.substring(colonIdx + 1).trim() });
+      }
+    }
+  }
+
+  if (messages.length === 0) {
+    messages.push({ author: 'raw', text: comments });
+  }
+
+  try {
+    const response = await fetch(BACKEND_URL + '/api/parse-chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, game_type: 'prediction' })
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({ detail: 'Error ' + response.status }));
+      throw new Error(err.detail || 'Error de API');
+    }
+
+    const data = await response.json();
+    const results = data.participants || [];
+
+    let added = 0;
+    for (const p of results) {
+      if (p.prediction != null && !predictGame.participants.find(x => x.name.toLowerCase() === p.name.toLowerCase())) {
+        predictGame.participants.push({ name: p.name, prediction: parseFloat(p.prediction) });
+        added++;
+      }
+    }
+
+    if (added > 0) {
+      predictRenderFeed();
+      predictRenderLeaderboard();
+      document.getElementById('predictPasteText').value = '';
+
+      if (predictGame.phase === 'setup') {
+        predictGame.phase = 'waiting';
+        document.getElementById('predictStatus').className = 'predict-status waiting';
+        document.getElementById('predictStatusText').textContent = '⏳ ESPERANDO REVELACIÓN';
+        document.getElementById('btnPredictReveal').disabled = false;
+      }
+
+      alert('✅ ' + added + ' predicción(es) agregada(s)');
+    } else {
+      alert('No se encontraron predicciones nuevas.');
+    }
+  } catch (error) {
+    alert('Error: ' + error.message);
+  }
+}
+
+// ─── Fetch current Binance price ─────────────────────────────────
+async function predictFetchCurrentPrice() {
+  try {
+    const asset = predictGame.asset.toUpperCase() + 'USDT';
+    const r = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=' + asset);
+    if (!r.ok) return;
+    const d = await r.json();
+    const price = parseFloat(d.price);
+    document.getElementById('predictCurrentPrice').textContent =
+      predictGame.asset + ': ' + formatPrice(price, predictGame.asset);
+    return price;
+  } catch (e) {
+    console.log('Error fetching price:', e);
+    return null;
+  }
+}
+
+// ─── Render live feed ────────────────────────────────────────────
+function predictRenderFeed() {
+  document.getElementById('predictCount').textContent = predictGame.participants.length;
+}
+
+// ─── Render leaderboard ──────────────────────────────────────────
+function predictRenderLeaderboard() {
+  const container = document.getElementById('predictLbRows');
+  const participants = predictGame.participants;
+
+  if (participants.length === 0) {
+    container.innerHTML = '<div class="predict-lb-empty">Esperando predicciones...</div>';
+    return;
+  }
+
+  // Sort by prediction price (descending) during collection/waiting, by distance during results
+  let sorted;
+  if (predictGame.phase === 'results' && predictGame.ranking.length > 0) {
+    sorted = predictGame.ranking;
+  } else {
+    sorted = [...participants].sort((a, b) => b.prediction - a.prediction);
+  }
+
+  container.innerHTML = sorted.map((p, i) => {
+    const pos = predictGame.phase === 'results' ? (p.position || i + 1) : i + 1;
+    const medal = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : '#' + pos;
+    const isWinner = predictGame.phase === 'results' && pos === 1;
+    const distanceText = p.distance != null ? formatPrice(p.distance, predictGame.asset) : '';
+
+    return '<div class="predict-lb-row ' + (isWinner ? 'winner' : '') + '">' +
+      '<span class="predict-lb-pos">' + medal + '</span>' +
+      '<span class="predict-lb-name">' + (p.name || 'Unknown') + '</span>' +
+      '<span class="predict-lb-prediction">' + formatPrice(p.prediction, predictGame.asset) + '</span>' +
+      (distanceText ? '<span class="predict-lb-distance">Δ ' + distanceText + '</span>' : '') +
+    '</div>';
+  }).join('');
+}
+
+// ─── Reveal Winner ───────────────────────────────────────────────
+async function predictRevealWinner() {
+  if (predictGame.participants.length === 0) return alert('No hay predicciones');
+
+  document.getElementById('btnPredictReveal').disabled = true;
+  document.getElementById('btnPredictReveal').textContent = '⏳ Consultando Binance...';
+
+  try {
+    let resultData;
+
+    // If we have a session, use the backend endpoint
+    if (predictGame.sessionId) {
+      const asset = predictGame.asset.toUpperCase() + 'USDT';
+      const r = await fetch(BACKEND_URL + '/api/race/' + predictGame.sessionId + '/result?asset=' + asset);
+      if (!r.ok) throw new Error('Error ' + r.status);
+      resultData = await r.json();
+    } else {
+      // Calculate locally (for paste mode without session)
+      const price = await predictFetchCurrentPrice();
+      if (!price) throw new Error('No se pudo obtener el precio de Binance');
+
+      const ranking = predictGame.participants.map(p => ({
+        name: p.name,
+        prediction: p.prediction,
+        distance: Math.abs(p.prediction - price),
+        difference_pct: ((p.prediction - price) / price * 100).toFixed(2),
+        position: 0
+      }));
+      ranking.sort((a, b) => a.distance - b.distance);
+      ranking.forEach((r, i) => r.position = i + 1);
+
+      resultData = {
+        asset: predictGame.asset,
+        current_price: price,
+        ranking: ranking,
+        winner: ranking[0] || null,
+        total_participants: ranking.length
+      };
+    }
+
+    // Update game state
+    predictGame.phase = 'results';
+    predictGame.finalPrice = resultData.current_price;
+    predictGame.ranking = resultData.ranking;
+
+    // Update UI
+    document.getElementById('predictStatus').className = 'predict-status results';
+    document.getElementById('predictStatusText').textContent = '🏆 RESULTADOS';
+
+    // Show final price
+    document.getElementById('predictFinalAsset').textContent = resultData.asset;
+    document.getElementById('predictFinalValue').textContent = formatPrice(resultData.current_price, resultData.asset);
+    document.getElementById('predictFinalPrice').style.display = 'block';
+
+    // Update current price display
+    document.getElementById('predictCurrentPrice').textContent =
+      resultData.asset + ': ' + formatPrice(resultData.current_price, resultData.asset);
+
+    // Render final leaderboard
+    predictRenderLeaderboard();
+
+    // Show winner
+    if (resultData.winner) {
+      const w = resultData.winner;
+      document.getElementById('predictWinnerName').textContent = w.name;
+      document.getElementById('predictWinnerPred').textContent = 'Predicción: ' + formatPrice(w.prediction, resultData.asset);
+      document.getElementById('predictWinnerDiff').textContent =
+        'Diferencia: ' + formatPrice(w.distance, resultData.asset) + ' (' + w.difference_pct + '%)';
+      document.getElementById('predictWinnerPrizeText').textContent =
+        '🎁 Premio: ' + (document.getElementById('predictPrize').value || 'Gloria eterna');
+      document.getElementById('predictWinnerDisplay').classList.add('show');
+
+      // Effects!
+      RaceAudio.init();
+      RaceAudio.victory();
+      createConfetti();
+    }
+
+    document.getElementById('btnPredictReveal').textContent = '🏆 REVELADO';
+
+  } catch (error) {
+    alert('Error: ' + error.message);
+    document.getElementById('btnPredictReveal').disabled = false;
+    document.getElementById('btnPredictReveal').textContent = '🏆 REVELAR GANADOR';
+  }
+}
+
+// ─── Reset Predictions ───────────────────────────────────────────
+function predictReset() {
+  if (predictGame.participants.length > 0 && !confirm('¿Reiniciar predicciones?')) return;
+
+  clearInterval(predictGame.pollInterval);
+
+  predictGame.phase = 'setup';
+  predictGame.sessionId = null;
+  predictGame.participants = [];
+  predictGame.finalPrice = null;
+  predictGame.ranking = [];
+
+  document.getElementById('predictStatus').className = 'predict-status setup';
+  document.getElementById('predictStatusText').textContent = 'CONFIGURACIÓN';
+  document.getElementById('predictCount').textContent = '0';
+  document.getElementById('predictAsset').disabled = false;
+  document.getElementById('btnPredictStart').disabled = false;
+  document.getElementById('btnPredictStop').disabled = true;
+  document.getElementById('btnPredictReveal').disabled = true;
+  document.getElementById('btnPredictReveal').textContent = '🏆 REVELAR GANADOR';
+  document.getElementById('predictChatStatus').style.display = 'none';
+  document.getElementById('predictVideoInput').value = '';
+  document.getElementById('predictCurrentPrice').textContent = 'Precio: ---';
+  document.getElementById('predictFinalPrice').style.display = 'none';
+  document.getElementById('predictWinnerDisplay').classList.remove('show');
+  document.getElementById('predictLbRows').innerHTML = '<div class="predict-lb-empty">Esperando predicciones...</div>';
+  document.getElementById('predictPasteText').value = '';
+}
 </script>
 </body>
 </html>
