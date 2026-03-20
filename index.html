@@ -4,38 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🎮 MLP Games - Carrera & Predicciones</title>
-<script>
-(function(){
-  const PASS = 'navy2026!';
-  const KEY = 'mlp_games_auth';
-  if(sessionStorage.getItem(KEY) !== PASS){
-    document.addEventListener('DOMContentLoaded', function(){
-      document.body.innerHTML = `
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#0a0a1a;color:#e0e0e0;font-family:'Segoe UI',sans-serif;">
-          <div style="background:#12122a;border:1px solid #2a2a4a;border-radius:16px;padding:40px;text-align:center;max-width:400px;width:90%">
-            <div style="font-size:48px;margin-bottom:16px">🎮</div>
-            <div style="font-size:22px;font-weight:700;margin-bottom:8px;color:#7c6af7">MLP GAMES</div>
-            <div style="font-size:14px;color:#888;margin-bottom:24px">Acceso restringido</div>
-            <input id="pwInput" type="password" placeholder="Contraseña..." 
-              style="width:100%;padding:12px 16px;background:#0a0a1a;border:1px solid #2a2a4a;border-radius:8px;color:#e0e0e0;font-size:16px;margin-bottom:12px;outline:none"
-              onkeydown="if(event.key==='Enter')checkPw()">
-            <button onclick="checkPw()" 
-              style="width:100%;padding:12px;background:#7c6af7;border:none;border-radius:8px;color:#fff;font-size:16px;font-weight:700;cursor:pointer">
-              ENTRAR
-            </button>
-            <div id="pwErr" style="color:#ff4444;margin-top:12px;font-size:13px;display:none">Contraseña incorrecta</div>
-          </div>
-        </div>`;
-    });
-    window.checkPw = function(){
-      const val = document.getElementById('pwInput').value;
-      if(val === PASS){ sessionStorage.setItem(KEY, PASS); location.reload(); }
-      else { document.getElementById('pwErr').style.display='block'; }
-    };
-    throw new Error('AUTH_REQUIRED');
-  }
-})();
-</script>
+
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════════
