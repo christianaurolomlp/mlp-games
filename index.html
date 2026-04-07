@@ -1882,7 +1882,13 @@ async function g3ProcessWithIA() {
     const messages = [];
     let currentAuthor = '';
 
+    // Regex to detect YouTube membership/subscriber badge lines
+    const memberBadgeRe = /^(miembro|usuario|member|subscriber|suscriptor|patron|fan|top fan|actividad|nuevo miembro).{0,40}$/i;
+
     for (const line of lines) {
+      // Skip empty lines and YouTube membership badge lines
+      if (!line.trim() || memberBadgeRe.test(line.trim())) continue;
+
       if (line.startsWith('@')) {
         currentAuthor = line.replace('@', '').trim();
       } else if (currentAuthor) {
@@ -1892,7 +1898,12 @@ async function g3ProcessWithIA() {
         // Try "author: message" format
         const colonIdx = line.indexOf(':');
         if (colonIdx > 0) {
-          messages.push({ author: line.substring(0, colonIdx).trim(), text: line.substring(colonIdx + 1).trim() });
+          const possibleAuthor = line.substring(0, colonIdx).trim();
+          const possibleText = line.substring(colonIdx + 1).trim();
+          // Make sure the "author" part isn't a membership badge
+          if (!memberBadgeRe.test(possibleAuthor)) {
+            messages.push({ author: possibleAuthor, text: possibleText });
+          }
         }
       }
     }
@@ -2293,8 +2304,10 @@ async function predictProcessPaste() {
   const lines = comments.split('\n').filter(l => l.trim());
   const messages = [];
   let currentAuthor = '';
+  const memberBadgeRePred = /^(miembro|usuario|member|subscriber|suscriptor|patron|fan|top fan|actividad|nuevo miembro).{0,40}$/i;
 
   for (const line of lines) {
+    if (!line.trim() || memberBadgeRePred.test(line.trim())) continue;
     if (line.startsWith('@')) {
       currentAuthor = line.replace('@', '').trim();
     } else if (currentAuthor) {
@@ -2303,7 +2316,10 @@ async function predictProcessPaste() {
     } else {
       const colonIdx = line.indexOf(':');
       if (colonIdx > 0) {
-        messages.push({ author: line.substring(0, colonIdx).trim(), text: line.substring(colonIdx + 1).trim() });
+        const possibleAuthor = line.substring(0, colonIdx).trim();
+        if (!memberBadgeRePred.test(possibleAuthor)) {
+          messages.push({ author: possibleAuthor, text: line.substring(colonIdx + 1).trim() });
+        }
       }
     }
   }
