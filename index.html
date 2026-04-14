@@ -1190,41 +1190,36 @@ yo quiero ETH"></textarea>
       <div class="predict-count-label">PREDICCIONES RECIBIDAS</div>
     </div>
 
-    <!-- INICIAR / CERRAR -->
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
-      <button class="btn predict-primary" id="btnPredictStart" onclick="predictStartManual()">🎯 INICIAR</button>
-      <button class="btn danger" id="btnPredictStop" onclick="predictCloseEntries()" disabled>⏹ CERRAR</button>
+    <!-- MODO 1: AUTO YOUTUBE -->
+    <div style="border:1px solid #553355;border-radius:8px;padding:10px;margin-bottom:10px;">
+      <div style="color:#ff66aa;font-size:11px;letter-spacing:2px;margin-bottom:8px;">📺 MODO 1 — AUTO YOUTUBE</div>
+      <input type="text" id="predictVideoInput" placeholder="URL o ID del video de YouTube..." style="width:100%;background:#1a0a1a;border:1px solid #553355;color:#fff;padding:8px;border-radius:6px;margin-bottom:6px;box-sizing:border-box;">
+      <div class="chat-status" id="predictChatStatus" style="display:none"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <button class="btn predict-primary" id="btnPredictStart" onclick="predictStartCollection()">🎯 INICIAR AUTO</button>
+        <button class="btn danger" id="btnPredictStop" onclick="predictStopCollection()" disabled>⏹ CERRAR</button>
+      </div>
     </div>
 
-    <!-- Paste Mode (visible tras INICIAR) -->
-    <div id="predictPasteZone" style="display:none;">
-      <div class="ia-instructions" style="color:#cc5588;margin-bottom:8px;">
-        🤖 Pega comentarios del chat — la IA extrae las predicciones automáticamente.
-      </div>
+    <!-- MODO 2: MANUAL PASTE -->
+    <div style="border:1px solid #553355;border-radius:8px;padding:10px;margin-bottom:10px;">
+      <div style="color:#ff66aa;font-size:11px;letter-spacing:2px;margin-bottom:8px;">📋 MODO 2 — PEGAR COMENTARIOS</div>
+      <div style="color:#884466;font-size:11px;margin-bottom:6px;">Copia comentarios del chat de YouTube y pégalos aquí. La IA extrae las predicciones.</div>
       <textarea class="predict-paste-textarea" id="predictPasteText" placeholder="Pega aquí los comentarios del chat...
 
 Ejemplo:
 Pedro_Trader: yo digo 72.500
 CriptoJuan: creo que 69800
-Maria123: apoyo a $71k" style="width:100%;min-height:100px;"></textarea>
-      <button class="btn predict-primary" style="width:100%;margin-top:6px;" onclick="predictProcessPaste()">🤖 PROCESAR CON IA</button>
-    </div>
-
-    <!-- Auto YouTube (avanzado, colapsado) -->
-    <div class="predict-paste" style="margin-top:8px;">
-      <div class="predict-paste-header" onclick="togglePredictPaste()" style="font-size:11px;color:#884466;">
-        <span>📺 Auto-YouTube (avanzado)</span>
-        <span class="ia-toggle" id="predictPasteToggle">▼</span>
+Maria123: apoyo a $71k" style="width:100%;min-height:90px;box-sizing:border-box;"></textarea>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;">
+        <button class="btn predict-primary" onclick="predictStartManual()">🎯 INICIAR MANUAL</button>
+        <button class="btn predict-primary" onclick="predictProcessPaste()">🤖 PROCESAR IA</button>
       </div>
-      <div class="predict-paste-content" id="predictPasteContent">
-        <input type="text" id="predictVideoInput" placeholder="URL o ID del video de YouTube..." style="width:100%;background:#1a0a1a;border:1px solid #553355;color:#fff;padding:8px;border-radius:6px;margin-bottom:6px;">
-        <div class="chat-status" id="predictChatStatus" style="display:none"></div>
-        <button class="btn predict-primary" style="width:100%;" onclick="predictStartCollection()">📡 Conectar YouTube Live</button>
-      </div>
+      <button class="btn danger" id="btnPredictStopManual" onclick="predictCloseEntries()" style="width:100%;margin-top:6px;" disabled>⏹ CERRAR PREDICCIONES</button>
     </div>
 
     <!-- Action Buttons -->
-    <div style="display:grid; gap:8px; margin-top:8px;">
+    <div style="display:grid; gap:8px;">
       <button class="btn warning" id="btnPredictReveal" onclick="predictRevealWinner()" disabled>🏆 REVELAR GANADOR</button>
       <button class="btn danger" id="btnPredictReset" onclick="predictReset()">🔄 REINICIAR</button>
     </div>
@@ -2198,11 +2193,9 @@ function predictStartManual() {
   predictGame.asset = document.getElementById('predictAsset').value;
   predictGame.phase = 'collecting';
 
-  document.getElementById('btnPredictStart').disabled = true;
-  document.getElementById('btnPredictStop').disabled = false;
   document.getElementById('btnPredictReveal').disabled = false;
+  document.getElementById('btnPredictStopManual').disabled = false;
   document.getElementById('predictAsset').disabled = true;
-  document.getElementById('predictPasteZone').style.display = 'block';
 
   document.getElementById('predictStatus').className = 'predict-status collecting';
   document.getElementById('predictStatusText').textContent = '🔴 ABIERTO — PEGANDO COMENTARIOS';
@@ -2212,13 +2205,12 @@ function predictStartManual() {
   predictGame.pollInterval = setInterval(predictFetchCurrentPrice, 15000);
 }
 
-// ─── Close entries (no more predictions) ─────────────────────────
+// ─── Close entries manual mode ────────────────────────────────────
 function predictCloseEntries() {
   clearInterval(predictGame.pollInterval);
   predictGame.phase = 'waiting';
 
-  document.getElementById('btnPredictStop').disabled = true;
-  document.getElementById('predictPasteZone').style.display = 'none';
+  document.getElementById('btnPredictStopManual').disabled = true;
 
   document.getElementById('predictStatus').className = 'predict-status waiting';
   document.getElementById('predictStatusText').textContent = '🔒 PREDICCIONES CERRADAS';
