@@ -2200,9 +2200,9 @@ function predictStartManual() {
   document.getElementById('predictStatus').className = 'predict-status collecting';
   document.getElementById('predictStatusText').textContent = '🔴 ABIERTO — PEGANDO COMENTARIOS';
 
-  // Start price polling
+  // Start price polling every 5s for live re-ranking
   predictFetchCurrentPrice();
-  predictGame.pollInterval = setInterval(predictFetchCurrentPrice, 15000);
+  predictGame.pollInterval = setInterval(predictFetchCurrentPrice, 5000);
 }
 
 // ─── Close entries manual mode ────────────────────────────────────
@@ -2397,7 +2397,7 @@ async function predictProcessPaste() {
   }
 }
 
-// ─── Fetch current Binance price ─────────────────────────────────
+// ─── Fetch current Binance price + re-rank leaderboard live ──────
 async function predictFetchCurrentPrice() {
   try {
     const asset = predictGame.asset.toUpperCase() + 'USDT';
@@ -2405,13 +2405,15 @@ async function predictFetchCurrentPrice() {
     if (!r.ok) return;
     const d = await r.json();
     const price = parseFloat(d.price);
+    predictGame.currentPrice = price;
     document.getElementById('predictCurrentPrice').textContent =
-      predictGame.asset + ': ' + formatPrice(price, predictGame.asset);
+      '💰 ' + predictGame.asset + ': ' + formatPrice(price, predictGame.asset);
+    // Re-render leaderboard with updated distances
+    if (predictGame.participants.length > 0 && predictGame.phase !== 'results') {
+      predictRenderLeaderboard();
+    }
     return price;
-  } catch (e) {
-    console.log('Error fetching price:', e);
-    return null;
-  }
+  } catch (e) { return null; }
 }
 
 // ─── Render live feed ────────────────────────────────────────────
@@ -2419,7 +2421,7 @@ function predictRenderFeed() {
   document.getElementById('predictCount').textContent = predictGame.participants.length;
 }
 
-// ─── Render leaderboard ──────────────────────────────────────────
+// ─── Render leaderboard (live re-ranking by distance to current price) ───
 function predictRenderLeaderboard() {
   const container = document.getElementById('predictLbRows');
   const participants = predictGame.participants;
@@ -2429,25 +2431,34 @@ function predictRenderLeaderboard() {
     return;
   }
 
-  // Sort by prediction price (descending) during collection/waiting, by distance during results
   let sorted;
   if (predictGame.phase === 'results' && predictGame.ranking.length > 0) {
     sorted = predictGame.ranking;
+  } else if (predictGame.currentPrice) {
+    // Sort live by distance to current price
+    sorted = [...participants].map(p => ({
+      ...p,
+      distance: Math.abs(p.prediction - predictGame.currentPrice),
+      diff_pct: ((p.prediction - predictGame.currentPrice) / predictGame.currentPrice * 100).toFixed(1)
+    })).sort((a, b) => a.distance - b.distance);
   } else {
     sorted = [...participants].sort((a, b) => b.prediction - a.prediction);
   }
 
   container.innerHTML = sorted.map((p, i) => {
-    const pos = predictGame.phase === 'results' ? (p.position || i + 1) : i + 1;
+    const pos = i + 1;
     const medal = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : '#' + pos;
     const isWinner = predictGame.phase === 'results' && pos === 1;
-    const distanceText = p.distance != null ? formatPrice(p.distance, predictGame.asset) : '';
+    const dist = p.distance != null ? formatPrice(p.distance, predictGame.asset) : '';
+    const pct = p.diff_pct != null ? (p.diff_pct > 0 ? '+' + p.diff_pct : p.diff_pct) + '%' : '';
+    const arrow = p.diff_pct != null ? (parseFloat(p.diff_pct) > 0 ? '▲' : '▼') : '';
+    const arrowColor = parseFloat(p.diff_pct) > 0 ? '#00ff88' : '#ff4444';
 
-    return '<div class="predict-lb-row ' + (isWinner ? 'winner' : '') + '">' +
+    return '<div class="predict-lb-row ' + (isWinner ? 'winner' : '') + '" style="' + (pos===1 && predictGame.currentPrice ? 'background:rgba(255,215,0,0.08);' : '') + '">' +
       '<span class="predict-lb-pos">' + medal + '</span>' +
       '<span class="predict-lb-name">' + (p.name || 'Unknown') + '</span>' +
       '<span class="predict-lb-prediction">' + formatPrice(p.prediction, predictGame.asset) + '</span>' +
-      (distanceText ? '<span class="predict-lb-distance">Δ ' + distanceText + '</span>' : '') +
+      (dist ? '<span class="predict-lb-distance" style="color:' + arrowColor + ';font-size:10px;">' + arrow + ' ' + pct + ' (Δ' + dist + ')</span>' : '') +
     '</div>';
   }).join('');
 }
